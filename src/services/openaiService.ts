@@ -55,14 +55,14 @@ const generatePresentationTitle = async (apiKey: string, topics: string[]): Prom
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'user',
           content: prompt
         }
       ],
-      max_tokens: 50,
+      max_tokens: 30,
       temperature: 0.9
     })
   });
@@ -104,25 +104,49 @@ const generateSingleSlide = async (
     ? `The presentation should incorporate these topics: ${topics.join(', ')}` 
     : 'The presentation should be completely random and entertaining';
 
-  const prompt = `Create slide ${slideNumber} of ${totalSlides} for a party presentation titled "${presentationTitle}".
-    
-    ${topicsContext}
-    
-    Theme: ${theme}
-    
-    Generate:
-    1. A catchy slide title (max 8 words)
-    2. Engaging content (2-4 sentences, fun and entertaining)
-    3. One relevant emoji
-    
-    Make it perfect for party games, icebreakers, and entertainment. Be creative, funny, and engaging!
-    
-    Format your response as JSON:
-    {
-      "title": "slide title here",
-      "content": "slide content here",
-      "emoji": "single emoji here"
-    }`;
+  const isImageOnly = Math.random() < 0.7;
+  
+  let prompt: string;
+  if (isImageOnly) {
+    prompt = `Create slide ${slideNumber} of ${totalSlides} for a party presentation titled "${presentationTitle}".
+      
+      ${topicsContext}
+      
+      This slide should be IMAGE-ONLY with no text content - just a powerful visual.
+      
+      Generate:
+      1. A single word or very short phrase (1-3 words max) that will be the visual focus
+      2. One relevant emoji
+      
+      Make it visually striking and perfect for party entertainment!
+      
+      Format your response as JSON:
+      {
+        "title": "single word or short phrase",
+        "content": "",
+        "emoji": "single emoji here"
+      }`;
+  } else {
+    prompt = `Create slide ${slideNumber} of ${totalSlides} for a party presentation titled "${presentationTitle}".
+      
+      ${topicsContext}
+      
+      This slide can have minimal text with an image.
+      
+      Generate:
+      1. A single word or very short phrase (1-3 words max)
+      2. One short sentence or phrase (max 8 words)
+      3. One relevant emoji
+      
+      Keep it minimal and visually focused!
+      
+      Format your response as JSON:
+      {
+        "title": "single word or short phrase",
+        "content": "one short sentence max 8 words",
+        "emoji": "single emoji here"
+      }`;
+  }
 
   const response = await fetch(`${OPENAI_API_BASE}/chat/completions`, {
     method: 'POST',
@@ -131,15 +155,15 @@ const generateSingleSlide = async (
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'user',
           content: prompt
         }
       ],
-      max_tokens: 200,
-      temperature: 0.8
+      max_tokens: 100,
+      temperature: 0.9
     })
   });
 
@@ -152,22 +176,24 @@ const generateSingleSlide = async (
   
   try {
     const slideData = JSON.parse(content);
-    const imageUrl = await generateSlideImage(apiKey, slideData.title, slideData.content, theme);
+    const imageUrl = await generateSlideImage(apiKey, slideData.title, slideData.content || slideData.title, theme);
     
     return {
       id: slideNumber,
       title: slideData.title || `Slide ${slideNumber}`,
-      content: slideData.content || 'Amazing content coming your way!',
+      content: slideData.content || '',
       emoji: slideData.emoji || '🎉',
       imageUrl
     };
   } catch (parseError) {
     console.warn('Failed to parse slide JSON, using fallback:', parseError);
+    const imageUrl = await generateSlideImage(apiKey, 'Party Time', 'Amazing', theme);
     return {
       id: slideNumber,
-      title: `Amazing Slide ${slideNumber}`,
-      content: 'Get ready for something spectacular! This slide will blow your mind with its incredible content.',
-      emoji: '🎉'
+      title: isImageOnly ? 'Party!' : 'Amazing',
+      content: isImageOnly ? '' : 'Get ready for fun!',
+      emoji: '🎉',
+      imageUrl
     };
   }
 };
@@ -195,7 +221,7 @@ const generateSlideImage = async (
         model: 'dall-e-3',
         prompt: imagePrompt,
         n: 1,
-        size: '1024x1024',
+        size: '512x512',
         quality: 'standard'
       })
     });

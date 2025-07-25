@@ -10,6 +10,30 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
   onClick, 
   isGenerating 
 }) => {
+  const funnyMessages = [
+    "🤖 Teaching AI to party...",
+    "🎨 Mixing digital paint with unicorn tears...",
+    "🧠 Convincing pixels to dance...",
+    "🎭 Rehearsing with virtual comedians...",
+    "🚀 Launching creativity rockets...",
+    "🎪 Training circus elephants to code...",
+    "🌟 Sprinkling magic presentation dust...",
+    "🎵 Composing slide symphonies...",
+    "🦄 Bribing unicorns for inspiration...",
+    "🎲 Rolling dice of awesomeness..."
+  ];
+
+  const [currentMessage, setCurrentMessage] = React.useState(0);
+
+  React.useEffect(() => {
+    if (isGenerating) {
+      const interval = setInterval(() => {
+        setCurrentMessage(prev => (prev + 1) % funnyMessages.length);
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [isGenerating, funnyMessages.length]);
+
   return (
     <div className="generate-button-section">
       <button
@@ -20,7 +44,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
         {isGenerating ? (
           <>
             <span className="spinner"></span>
-            Generating Presentation...
+            {funnyMessages[currentMessage]}
           </>
         ) : (
           <>
@@ -31,7 +55,7 @@ export const GenerateButton: React.FC<GenerateButtonProps> = ({
       
       <p className="generate-hint">
         {isGenerating 
-          ? 'Creating your AI-powered presentation...' 
+          ? 'Hold tight! We\'re doing some seriously silly AI magic behind the scenes! 🎭✨' 
           : 'Click to generate and open your presentation in a new window!'
         }
       </p>

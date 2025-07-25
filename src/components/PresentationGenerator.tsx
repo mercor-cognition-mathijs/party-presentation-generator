@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './PresentationGenerator.css';
 import { TopicInput } from './TopicInput';
-import { ThemeSelector } from './ThemeSelector';
 import { SlideCountSelector } from './SlideCountSelector';
 import { GenerateButton } from './GenerateButton';
 import { openPresentationWindow } from '../utils/presentationWindow';
@@ -17,9 +16,9 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
   onResetApiKey 
 }) => {
   const [topics, setTopics] = useState<string[]>(['', '', '']);
-  const [selectedTheme, setSelectedTheme] = useState<string>('party');
   const [slideCount, setSlideCount] = useState<number>(5);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [showPopupWarning, setShowPopupWarning] = useState<boolean>(false);
 
   const handleTopicChange = (index: number, value: string) => {
     const newTopics = [...topics];
@@ -28,6 +27,7 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
   };
 
   const handleGenerate = async () => {
+    setShowPopupWarning(true);
     setIsGenerating(true);
     
     try {
@@ -36,15 +36,16 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
         apiKey,
         filteredTopics,
         slideCount,
-        selectedTheme
+        'party'
       );
       
-      openPresentationWindow(presentation, selectedTheme);
+      openPresentationWindow(presentation, 'party');
     } catch (error) {
       console.error('Error generating presentation:', error);
       alert('Error generating presentation. Please check your API key and try again.');
     } finally {
       setIsGenerating(false);
+      setShowPopupWarning(false);
     }
   };
 
@@ -62,15 +63,20 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
       </header>
 
       <div className="generator-content">
+        {showPopupWarning && (
+          <div className="popup-warning">
+            <div className="popup-warning-content">
+              <h3>🚨 Allow Popups!</h3>
+              <p>Your presentation will open in a new window. Please allow popups for this site!</p>
+              <button onClick={() => setShowPopupWarning(false)}>Got it! 👍</button>
+            </div>
+          </div>
+        )}
+        
         <div className="control-panel">
           <TopicInput 
             topics={topics}
             onTopicChange={handleTopicChange}
-          />
-          
-          <ThemeSelector 
-            selectedTheme={selectedTheme}
-            onThemeChange={setSelectedTheme}
           />
           
           <SlideCountSelector 
@@ -85,11 +91,11 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
         </div>
 
         <div className="preview-section">
-          <div className={`theme-preview theme-${selectedTheme}`}>
-            <h3>Theme Preview: {selectedTheme}</h3>
+          <div className="theme-preview theme-party">
+            <h3>🎪 Ready to Party!</h3>
             <div className="preview-slide">
-              <h2>Sample Slide Title</h2>
-              <p>This is how your presentation will look with the {selectedTheme} theme.</p>
+              <h2>Amazing Slides</h2>
+              <p>Your AI-powered presentation will be visually stunning with minimal text and maximum impact!</p>
               <div className="preview-emoji">🎉</div>
             </div>
           </div>
