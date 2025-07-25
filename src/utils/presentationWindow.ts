@@ -66,7 +66,7 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             max-width: 1200px;
             text-align: center;
             padding: 60px;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
