@@ -49,6 +49,9 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             display: flex;
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         
         .presentation-container {
@@ -66,7 +69,7 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             max-width: 1200px;
             text-align: center;
             padding: 60px;
-            background: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
@@ -108,13 +111,29 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
         
-        .slide-image {
-            max-width: 500px;
-            max-height: 400px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin: 20px auto;
-            display: block;
+        .slide-with-background {
+            background-color: rgba(0, 0, 0, 0.4) !important;
+            backdrop-filter: blur(5px);
+        }
+        
+        .slide-with-background .slide-title {
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .slide-with-background .slide-content {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .slide-with-background .slide-emoji {
+            display: none;
         }
         
         .navigation {
@@ -197,11 +216,11 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
         </div>
         
         ${presentation.slides.map((slide, index) => `
-            <div class="slide ${index === 0 ? 'active' : ''}" data-slide="${index}">
+            <div class="slide ${slide.imageUrl ? 'slide-with-background' : ''} ${index === 0 ? 'active' : ''}" 
+                 data-slide="${index}">
                 <div class="slide-emoji">${slide.emoji}</div>
                 <h1 class="slide-title">${slide.title}</h1>
                 <div class="slide-content">${slide.content}</div>
-                ${slide.imageUrl ? `<img src="${slide.imageUrl}" alt="Slide image" class="slide-image" onerror="this.style.display='none'">` : ''}
             </div>
         `).join('')}
         
@@ -216,6 +235,7 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
     </div>
     
     <script>
+        const slidesData = ${JSON.stringify(presentation.slides)};
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
@@ -224,6 +244,13 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             slides[currentSlide].classList.remove('active');
             currentSlide = (n + totalSlides) % totalSlides;
             slides[currentSlide].classList.add('active');
+            
+            const slideData = slidesData[currentSlide];
+            if (slideData.imageUrl) {
+                document.body.style.backgroundImage = "url('" + slideData.imageUrl + "')";
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
             
             document.getElementById('current-slide').textContent = currentSlide + 1;
             document.getElementById('prev-btn').disabled = currentSlide === 0;
