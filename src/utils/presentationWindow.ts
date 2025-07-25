@@ -112,7 +112,7 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
         }
         
         .slide-with-background {
-            background: rgba(0, 0, 0, 0.4) !important;
+            background-color: rgba(0, 0, 0, 0.4) !important;
             backdrop-filter: blur(5px);
         }
         
