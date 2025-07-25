@@ -1,0 +1,138 @@
+.presentation-generator {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.generator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  background: white;
+  padding: 20px 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.generator-header h1 {
+  color: #333;
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.reset-api-key-button {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.reset-api-key-button:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.generator-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.control-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.preview-section {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+}
+
+.theme-preview {
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.theme-preview h3 {
+  margin: 0 0 20px 0;
+  text-transform: capitalize;
+  font-size: 1.2rem;
+}
+
+.preview-slide {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.preview-slide h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+}
+
+.preview-slide p {
+  margin: 0 0 15px 0;
+  line-height: 1.5;
+}
+
+.preview-emoji {
+  font-size: 2rem;
+}
+
+/* Theme styles */
+.theme-party {
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+  color: white;
+}
+
+.theme-neon {
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+  color: white;
+}
+
+.theme-sunset {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  color: #333;
+}
+
+.theme-ocean {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.theme-forest {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .generator-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .generator-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .generator-header h1 {
+    font-size: 2rem;
+  }
+}

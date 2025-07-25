@@ -1,0 +1,79 @@
+.theme-selector-section {
+  margin-bottom: 30px;
+}
+
+.theme-selector-section h3 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+.theme-description {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 12px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.theme-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.theme-option.selected {
+  border-color: #333;
+  box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.3);
+}
+
+.theme-emoji {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.theme-name {
+  font-size: 0.85rem;
+}
+
+/* Theme-specific colors */
+.theme-party {
+  background: linear-gradient(135deg, #ff6b6b, #feca57);
+}
+
+.theme-neon {
+  background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+}
+
+.theme-sunset {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  color: #333;
+  text-shadow: none;
+}
+
+.theme-ocean {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.theme-forest {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+}
