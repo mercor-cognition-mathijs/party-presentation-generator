@@ -49,6 +49,9 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             display: flex;
             align-items: center;
             justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
         
         .presentation-container {
@@ -70,9 +73,6 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             border-radius: 20px;
             backdrop-filter: blur(10px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
         }
         
         .slide.active {
@@ -217,8 +217,7 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
         
         ${presentation.slides.map((slide, index) => `
             <div class="slide ${slide.imageUrl ? 'slide-with-background' : ''} ${index === 0 ? 'active' : ''}" 
-                 data-slide="${index}"
-                 ${slide.imageUrl ? `style="background-image: url('${slide.imageUrl}')"` : ''}>
+                 data-slide="${index}">
                 <div class="slide-emoji">${slide.emoji}</div>
                 <h1 class="slide-title">${slide.title}</h1>
                 <div class="slide-content">${slide.content}</div>
@@ -236,6 +235,7 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
     </div>
     
     <script>
+        const slidesData = ${JSON.stringify(presentation.slides)};
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
@@ -244,6 +244,13 @@ const generatePresentationHTML = (presentation: Presentation, theme: string): st
             slides[currentSlide].classList.remove('active');
             currentSlide = (n + totalSlides) % totalSlides;
             slides[currentSlide].classList.add('active');
+            
+            const slideData = slidesData[currentSlide];
+            if (slideData.imageUrl) {
+                document.body.style.backgroundImage = "url('" + slideData.imageUrl + "')";
+            } else {
+                document.body.style.backgroundImage = 'none';
+            }
             
             document.getElementById('current-slide').textContent = currentSlide + 1;
             document.getElementById('prev-btn').disabled = currentSlide === 0;
