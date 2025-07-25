@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './PresentationGenerator.css';
 import { TopicInput } from './TopicInput';
 import { SlideCountSelector } from './SlideCountSelector';
@@ -19,6 +19,14 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
   const [slideCount, setSlideCount] = useState<number>(5);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [showPopupWarning, setShowPopupWarning] = useState<boolean>(false);
+  const [hasSeenPopupWarning, setHasSeenPopupWarning] = useState<boolean>(false);
+
+  useEffect(() => {
+    const popupPermissionShown = localStorage.getItem('popup-permission-shown');
+    if (popupPermissionShown === 'true') {
+      setHasSeenPopupWarning(true);
+    }
+  }, []);
 
   const handleTopicChange = (index: number, value: string) => {
     const newTopics = [...topics];
@@ -27,7 +35,11 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
   };
 
   const handleGenerate = async () => {
-    setShowPopupWarning(true);
+    if (!hasSeenPopupWarning) {
+      setShowPopupWarning(true);
+      return;
+    }
+    
     setIsGenerating(true);
     
     try {
@@ -45,8 +57,14 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
       alert('Error generating presentation. Please check your API key and try again.');
     } finally {
       setIsGenerating(false);
-      setShowPopupWarning(false);
     }
+  };
+
+  const handlePopupWarningConfirm = () => {
+    setShowPopupWarning(false);
+    setHasSeenPopupWarning(true);
+    localStorage.setItem('popup-permission-shown', 'true');
+    handleGenerate();
   };
 
   return (
@@ -68,7 +86,7 @@ export const PresentationGenerator: React.FC<PresentationGeneratorProps> = ({
             <div className="popup-warning-content">
               <h3>🚨 Allow Popups!</h3>
               <p>Your presentation will open in a new window. Please allow popups for this site!</p>
-              <button onClick={() => setShowPopupWarning(false)}>Got it! 👍</button>
+              <button onClick={handlePopupWarningConfirm}>Got it! 👍</button>
             </div>
           </div>
         )}
