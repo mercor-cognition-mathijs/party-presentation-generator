@@ -24,7 +24,8 @@ export const generatePresentation = async (
 ): Promise<Presentation> => {
   try {
     const presentationTitle = await generatePresentationTitle(apiKey, topics);
-    const slides = await generateSlides(apiKey, topics, slideCount, theme, presentationTitle);
+    const narrative = await generateNarrative(apiKey, topics, presentationTitle, slideCount);
+    const slides = await generateSlides(apiKey, topics, slideCount, theme, presentationTitle, narrative);
     
     return {
       id: Date.now().toString(),
@@ -75,17 +76,66 @@ const generatePresentationTitle = async (apiKey: string, topics: string[]): Prom
   return data.choices[0]?.message?.content?.trim() || 'Amazing Party Presentation';
 };
 
+const generateNarrative = async (
+  apiKey: string,
+  topics: string[],
+  presentationTitle: string,
+  slideCount: number
+): Promise<string> => {
+  const topicsContext = topics.length > 0 
+    ? `incorporating these topics: ${topics.join(', ')}` 
+    : 'with completely random and entertaining themes';
+
+  const prompt = `Create a cohesive narrative arc for a party presentation titled "${presentationTitle}" with ${slideCount} slides ${topicsContext}.
+    
+    This narrative should:
+    1. Create an overarching story or theme that connects all slides
+    2. Have a clear beginning, middle, and end progression
+    3. Be fun, engaging, and suitable for party entertainment
+    4. Include unexpected twists or surprising elements
+    5. Guide the flow from one slide to the next
+    
+    Return a brief narrative outline (2-3 sentences) that will guide the individual slide creation.`;
+
+  const response = await fetch(`${OPENAI_API_BASE}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 150,
+      temperature: 0.8
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`OpenAI API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0]?.message?.content?.trim() || 'A fun journey through unexpected party adventures with surprising twists and memorable moments.';
+};
+
 const generateSlides = async (
   apiKey: string,
   topics: string[],
   slideCount: number,
   theme: string,
-  presentationTitle: string
+  presentationTitle: string,
+  narrative: string
 ): Promise<Slide[]> => {
   const slides: Slide[] = [];
   
   for (let i = 0; i < slideCount; i++) {
-    const slide = await generateSingleSlide(apiKey, topics, i + 1, slideCount, theme, presentationTitle);
+    const slide = await generateSingleSlide(apiKey, topics, i + 1, slideCount, theme, presentationTitle, narrative);
     slides.push(slide);
   }
   
@@ -98,11 +148,17 @@ const generateSingleSlide = async (
   slideNumber: number,
   totalSlides: number,
   theme: string,
-  presentationTitle: string
+  presentationTitle: string,
+  narrative: string
 ): Promise<Slide> => {
   const topicsContext = topics.length > 0 
     ? `The presentation should incorporate these topics: ${topics.join(', ')}` 
     : 'The presentation should be completely random and entertaining';
+
+  const narrativeContext = `Follow this narrative arc: ${narrative}`;
+  const slidePosition = slideNumber === 1 ? 'opening' : 
+                       slideNumber === totalSlides ? 'conclusion' : 
+                       slideNumber <= Math.ceil(totalSlides / 2) ? 'building up' : 'climax/resolution';
 
   const isImageOnly = Math.random() < 0.7;
   
@@ -111,14 +167,15 @@ const generateSingleSlide = async (
     prompt = `Create slide ${slideNumber} of ${totalSlides} for a party presentation titled "${presentationTitle}".
       
       ${topicsContext}
+      ${narrativeContext}
       
-      This slide should be IMAGE-ONLY with no text content - just a powerful visual.
+      This is the ${slidePosition} part of the story. This slide should be IMAGE-ONLY with no text content - just a powerful visual that fits the narrative flow.
       
       Generate:
-      1. A single word or very short phrase (1-3 words max) that will be the visual focus
-      2. One relevant emoji
+      1. A single word or very short phrase (1-3 words max) that advances the narrative
+      2. One relevant emoji that fits the story moment
       
-      Make it visually striking and perfect for party entertainment!
+      Make it visually striking, narratively coherent, and perfect for party entertainment!
       
       Format your response as JSON:
       {
@@ -130,15 +187,16 @@ const generateSingleSlide = async (
     prompt = `Create slide ${slideNumber} of ${totalSlides} for a party presentation titled "${presentationTitle}".
       
       ${topicsContext}
+      ${narrativeContext}
       
-      This slide can have minimal text with an image.
+      This is the ${slidePosition} part of the story. This slide can have minimal text with an image that advances the narrative.
       
       Generate:
-      1. A single word or very short phrase (1-3 words max)
-      2. One short sentence or phrase (max 8 words)
-      3. One relevant emoji
+      1. A single word or very short phrase (1-3 words max) that fits the story flow
+      2. One short sentence or phrase (max 8 words) that continues the narrative
+      3. One relevant emoji that matches this story moment
       
-      Keep it minimal and visually focused!
+      Keep it minimal, narratively coherent, and visually focused!
       
       Format your response as JSON:
       {
@@ -218,11 +276,10 @@ const generateSlideImage = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'dall-e-3',
+        model: 'dall-e-2',
         prompt: imagePrompt,
         n: 1,
-        size: '512x512',
-        quality: 'standard'
+        size: '256x256'
       })
     });
 
