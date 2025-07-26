@@ -265,7 +265,7 @@ const generateSlideImage = async (
     const imagePrompt = `Create a vibrant, party-themed image for a presentation slide titled "${title}". 
       Content context: ${content}
       Theme: ${theme}
-      Style: Colorful, fun, party atmosphere, suitable for entertainment and icebreaker games.
+      Style: Colorful, absurd, ridiculous, fun, party atmosphere, suitable for entertainment and icebreaker games.
       Make it visually appealing and engaging for a party presentation.`;
 
     const response = await fetch(`${OPENAI_API_BASE}/images/generations`, {
