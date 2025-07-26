@@ -132,12 +132,11 @@ const generateSlides = async (
   presentationTitle: string,
   narrative: string
 ): Promise<Slide[]> => {
-  const slides: Slide[] = [];
+  const slidePromises = Array.from({ length: slideCount }, (_, i) =>
+    generateSingleSlide(apiKey, topics, i + 1, slideCount, theme, presentationTitle, narrative)
+  );
   
-  for (let i = 0; i < slideCount; i++) {
-    const slide = await generateSingleSlide(apiKey, topics, i + 1, slideCount, theme, presentationTitle, narrative);
-    slides.push(slide);
-  }
+  const slides = await Promise.all(slidePromises);
   
   return slides;
 };
