@@ -83,7 +83,10 @@ export const PresentationDisplay: React.FC<PresentationDisplayProps> = ({
       style={{
         background: themeStyles.background,
         color: themeStyles.color,
-        backgroundImage: currentSlideData?.imageUrl ? `url(${currentSlideData.imageUrl})` : 'none'
+        backgroundImage: currentSlideData?.imageUrl ? `url(${currentSlideData.imageUrl})` : 'none',
+        backgroundSize: 'cover',
+        height: '100vh',
+        width: '100%'
       }}
     >
       <div className="presentation-container">
