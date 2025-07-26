@@ -91,7 +91,7 @@ const generateNarrative = async (
     This narrative should:
     1. Create an overarching story or theme that connects all slides
     2. Have a clear beginning, middle, and end progression
-    3. Be fun, engaging, and suitable for party entertainment
+    3. Be hilarious, ridiculous, fun, engaging, and suitable for party entertainment
     4. Include unexpected twists or surprising elements
     5. Guide the flow from one slide to the next
     
