@@ -220,7 +220,8 @@ const generateSingleSlide = async (
         }
       ],
       max_tokens: 100,
-      temperature: 0.9
+      temperature: 0.9,
+      response_format: { type: "json_object" }
     })
   });
 
