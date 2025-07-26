@@ -278,7 +278,7 @@ const generateSlideImage = async (
         model: 'dall-e-2',
         prompt: imagePrompt,
         n: 1,
-        size: '256x256'
+        size: '1024x1024'
       })
     });
 
